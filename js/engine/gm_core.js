@@ -57,6 +57,11 @@ const RT = GM.rt = {
   $A(o, k) { let a = o[k]; if (!Array.isArray(a)) { a = []; o[k] = a; } return a; },
   $A2(arr, i) { let a = arr[i]; if (!Array.isArray(a)) { a = []; arr[i] = a; } return a; },
   $AL(v) { return Array.isArray(v) ? v : []; },
+  // before arr[i] = v: entries skipped over are 0 in GameMaker, not undefined
+  $AF(arr, i) {
+    if (Array.isArray(arr) && typeof i === 'number' && i > arr.length) { const n = Math.floor(i); for (let k = arr.length; k < n; k++) arr[k] = 0; }
+    return arr;
+  },
   $W(target, self, other) { return GM.resolveAll(target, self, other, false); },
   $IS(target, self, other) { return GM.resolveAll(target, self, other, true); },
   $I(target, self, other) { return GM.resolveOne(target, self, other); },
@@ -483,9 +488,12 @@ GM.updateImages = function () {
   }
 };
 
+// instances created during the event are appended and get the same event this frame, as in GameMaker
+// (cutscenes rely on it: obj_move_actor must start counting in the frame it is created)
 GM.eventAll = function (type, sub) {
-  const list = GM.instances.slice();
-  for (const inst of list) {
+  const list = GM.instances;
+  for (let i = 0; i < list.length; i++) {
+    const inst = list[i];
     if (inst.$dead || !inst.$active) continue;
     GM.perform(inst, type, sub);
     if (GM.newRoom !== -1 && GM.roomChangeAbort) return;

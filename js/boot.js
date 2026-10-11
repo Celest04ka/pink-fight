@@ -339,6 +339,8 @@
 
   // ------------------------------------------------------------ input
   const blockKeys = new Set([37, 38, 39, 40, 32, 13, 16, 17, 9, 112, 113, 114, 116, 117, 118, 119, 120, 121, 122, 123]);
+  // WASD works like the arrow keys (W up, A left, S down, D right)
+  const WASD = { 87: 38, 65: 37, 83: 40, 68: 39 };
   window.addEventListener('keydown', (e) => {
     if (e.keyCode === 115 || (e.keyCode === 13 && e.altKey)) { // F4 / Alt+Enter: fullscreen
       e.preventDefault();
@@ -347,10 +349,10 @@
     }
     if (JF.keyFilter && JF.keyFilter(e)) return;
     if (blockKeys.has(e.keyCode) || (e.keyCode >= 65 && e.keyCode <= 90 && !e.ctrlKey)) e.preventDefault();
-    GM.input.keyDown(e.keyCode);
+    GM.input.keyDown(WASD[e.keyCode] || e.keyCode);
     GM.audio.resume();
   });
-  window.addEventListener('keyup', (e) => { GM.input.keyUp(e.keyCode); });
+  window.addEventListener('keyup', (e) => { GM.input.keyUp(WASD[e.keyCode] || e.keyCode); });
   window.addEventListener('blur', () => GM.input.clear());
 
   // opened by double click (file://): fetch() is not allowed, so load the packed resources as scripts
