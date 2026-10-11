@@ -182,7 +182,7 @@
     const rt = Object.assign({}, GM.rt, { G: GM.globals, R: GM.R, F: GM.F, S: GM.S, C: GM.C, I: GM.I });
     GML_BUILD(rt);
     nativeOverrides();
-    // test switch (no menu entry): JF.opts.invincible skips the damage scripts
+    // God Mode (Alt+Q, js/app.js shows it): JF.opts.invincible skips the damage scripts
     for (const n of ['scr_damage', 'scr_damage_all', 'scr_damage_maxhp', 'scr_damage_fixed']) {
       const f = GM.S[n];
       if (f) GM.S[n] = function (self, other, ...a) { if (JF.opts.invincible) return 0; return f(self, other, ...a); };
@@ -345,6 +345,11 @@
     if (e.keyCode === 115 || (e.keyCode === 13 && e.altKey)) { // F4 / Alt+Enter: fullscreen
       e.preventDefault();
       if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen().catch(() => 0);
+      return;
+    }
+    if (e.keyCode === 81 && e.altKey) { // Alt+Q: God Mode on/off (the damage scripts are skipped, see buildGML)
+      e.preventDefault();
+      if (!e.repeat) JF.opts.invincible = !JF.opts.invincible;
       return;
     }
     if (JF.keyFilter && JF.keyFilter(e)) return;

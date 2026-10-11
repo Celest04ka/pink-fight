@@ -12,6 +12,7 @@ You need a keyboard.
 - Z or Enter: confirm
 - X or Shift: cancel
 - F4: fullscreen
+- Alt+Q: God Mode on/off
 - Hold Esc: back to the start screen
 
 ## Credits

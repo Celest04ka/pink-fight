@@ -32,7 +32,21 @@
     const blink = 0.55 + 0.45 * Math.sin(menu.frame / 10);
     text(320, 320, 'PRESS Z TO START', A.big, WHITE, 1, blink);
     if (menu.message) text(320, 380, menu.message, A.small, WHITE);
+    godLabel();
     D.end();
+  };
+
+  // Alt+Q toggles God Mode (js/boot.js); while it is on, a small grey note sits in the top left corner
+  function godLabel() {
+    if (!JF.opts.invincible) return;
+    D.font = A.small; D.halign = 0; D.valign = 0;
+    D.text(6, 4, 'GOD MODE', 1, 1, 0, [GRAY, GRAY, GRAY, GRAY], 0.8);
+  }
+  D.hudDraw = function () {
+    if (!A || !JF.opts.invincible) return;
+    const saved = [D.font, D.halign, D.valign, D.color, D.alpha];
+    godLabel();
+    [D.font, D.halign, D.valign, D.color, D.alpha] = saved;
   };
 
   JF.keyFilter = (e) => {
