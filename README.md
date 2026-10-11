@@ -1,6 +1,6 @@
 # Pink
 
-The fight with Pink from DELTARUNE Chapter 5, playable in the browser.
+The fight with [Pink](https://celest04ka.github.io/pink-fight/) from DELTARUNE Chapter 5, playable in the browser.
 
 Everything here was extracted from the game's own files: sprites, sounds, music, text and the fight's code, which was converted to JavaScript so it runs in a web page. The encounter starts with the short scene the game shows after you lose once, and then the whole fight plays the same way it does in the game, including the dates and the game over screen. The ending is shortened: Pink sends you off right away and says goodbye.
 
