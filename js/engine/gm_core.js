@@ -309,6 +309,7 @@ GM.createInstance = function (x, y, objIndex, depth, creator, roomInst) {
   if (!obj) { GM.warnOnce('createbad:' + objIndex); return -4; }
   const id = roomInst ? roomInst.id : ++GM.lastId;
   const inst = new Instance(id, obj);
+  inst.$bornUnder = GM.evObj;
   inst.x = inst.xstart = inst.xprevious = x;
   inst.y = inst.ystart = inst.yprevious = y;
   if (depth !== undefined) inst.$depth = depth;
@@ -488,16 +489,22 @@ GM.updateImages = function () {
   }
 };
 
-// instances created during the event are appended and get the same event this frame, as in GameMaker
-// (cutscenes rely on it: obj_move_actor must start counting in the frame it is created)
+// GameMaker runs an event object by object, higher object index first, so an instance created during the event
+// gets it this frame only if its object index is not above the object being processed:
+// obj_move_actor (1562) made by obj_cutscene_master (1572) starts counting at once, while obj_dbulletcontroller (1455)
+// made by obj_pink_enemy (301) waits a frame (otherwise Pink's ghost spawns before obj_heart and deletes itself)
 GM.eventAll = function (type, sub) {
   const list = GM.instances;
+  const before = list.length;
   for (let i = 0; i < list.length; i++) {
     const inst = list[i];
     if (inst.$dead || !inst.$active) continue;
+    if (i >= before && inst.$bornUnder !== undefined && inst.object_index > inst.$bornUnder) continue;
+    GM.evObj = inst.object_index;
     GM.perform(inst, type, sub);
-    if (GM.newRoom !== -1 && GM.roomChangeAbort) return;
+    if (GM.newRoom !== -1 && GM.roomChangeAbort) { GM.evObj = undefined; return; }
   }
+  GM.evObj = undefined;
 };
 
 GM.handleAlarms = function () {
